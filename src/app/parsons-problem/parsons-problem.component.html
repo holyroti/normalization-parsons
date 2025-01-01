@@ -1,0 +1,45 @@
+<div class="parsons header">
+  <app-toolbar> </app-toolbar>
+
+  <div class="col-12" style="height: 50px;"> </div>
+
+  <div class="game">
+
+    <div class="upper col-12 d-flex"> 
+      <div class="question col-4"> 
+        <span> insert question here</span>
+      </div>
+
+      <div id="sortableTrash" class="sortable-code drop-zone trash-zone col-6">
+       
+      </div>
+
+    </div>
+
+    <br>
+    <br>
+
+    <div class="lower col-12 d-flex"> 
+      <div class="image col-4">
+        <span> insert image here</span>
+      </div>
+
+     
+      <div id="sortable" class="sortable-code drop-zone solution-zone col-6">
+        
+      </div>
+
+    </div>
+
+    
+    <div id="feedback-container" style="margin-top: 20px;">FEEDBACK HERE</div>
+
+
+    <div class="buttons">
+      <button (click)="getFeedback()">GET FEEDBACK</button>
+    </div>
+  </div>
+
+
+
+</div>
