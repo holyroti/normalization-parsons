@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // For ngModel
-import { CommonModule } from '@angular/common'; // For *ngIf
+import { AuthenticationService } from '../services/authentication.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule], // Add CommonModule here
+  imports: [FormsModule, CommonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
@@ -14,26 +15,57 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
   errorMessage: string = '';
+  showRegisterModal = false;
 
-  private users = [
-    { username: 'player1', password: 'password1' },
-    { username: 'player2', password: 'password2' },
-  ];
+  // Registration fields
+  regUsername: string = '';
+  regDisplayName: string = '';
+  regPassword: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthenticationService) {}
 
   login(): void {
-    const user = this.users.find(
-      (u) => u.username === this.username && u.password === this.password
-    );
+    this.authService.authenticate(this.username, this.password).subscribe({
+      next: (result) => {
+        if (result.success) {
+          sessionStorage.setItem('loggedInUser', JSON.stringify(result.user));
+          this.router.navigate(['/landing']);
+        } else {
+          this.errorMessage = 'Invalid username or password';
+        }
+      },
+      error: (error) => {
+        console.error('Authentication error:', error);
+        this.errorMessage = 'Login failed due to system error';
+      },
+    });
+  }
 
-    if (user) {
-      sessionStorage.setItem('loggedInUser', JSON.stringify(user));
-      this.router.navigate(['/landing']); // Redirect to the landing page
-      sessionStorage.setItem('loggedInUser', JSON.stringify({ username: this.username }));
+  openRegisterModal(): void {
+    this.showRegisterModal = true;
+  }
 
-    } else {
-      this.errorMessage = 'Invalid username or password';
-    }
+  closeRegisterModal(): void {
+    this.showRegisterModal = false;
+  }
+
+  register(): void {
+    const user = {
+      username: this.regUsername,
+      displayName: this.regDisplayName,
+      password: this.regPassword,
+      icon: '/assets/avatars/avatar-placeholder.png', // Default icon
+    };
+
+    this.authService.register(user).subscribe({
+      next: (result) => {
+        alert('Registration successful! Please log in.');
+        this.closeRegisterModal();
+      },
+      error: (error) => {
+        console.error('Registration error:', error);
+        alert('Registration failed.');
+      },
+    });
   }
 }

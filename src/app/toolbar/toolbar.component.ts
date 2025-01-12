@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SettingsDialogComponent } from '../settings-dialog/settings-dialog.component';
 import { AchievementsDialogComponent } from '../achievements-dialog/achievements-dialog.component';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -25,7 +26,8 @@ import { AchievementsDialogComponent } from '../achievements-dialog/achievements
 })
 export class ToolbarComponent {
   @Input() username: string = 'Guest';
-  progress = 30; // Initialize and update this value as the user progresses through questions
+  @Input() userIcon: string = 'assets/avatar-placeholder.png'; 
+  progress = 30;
   showInfo = false;
   showAchievements = false;
 
@@ -36,7 +38,33 @@ export class ToolbarComponent {
   ];
 
 
-  constructor(private router: Router, public dialog: MatDialog) {}
+  constructor(private router: Router, public dialog: MatDialog, private userService: UserService) {}
+
+
+  
+  ngOnInit(): void {
+    const user = this.userService.getLoggedInUser();
+    if (!this.userService.isLoggedIn()) {
+      console.log('User not logged in, redirecting to login.');
+      this.router.navigate(['/']);
+    } else{
+      this.username = user.DISPLAYNAME || 'Guest';
+      this.userIcon = user.ICON || 'assets/avatar-placeholder.png'; // Update icon
+    }
+
+   
+  }
+
+  getLoggedInUser(): any {
+    try {
+      const userData = sessionStorage.getItem('loggedInUser');
+      return userData ? JSON.parse(userData) : null;
+    } catch (e) {
+      console.error('Failed to parse session data:', e);
+      return null;
+    }
+  }
+
 
   openProfilePicSelectDialog(): void {
     const dialogRef = this.dialog.open(ProfilePicSelectDialogComponent, {

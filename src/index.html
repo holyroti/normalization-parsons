@@ -8,147 +8,29 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
 
 
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  <script src="https://kit.fontawesome.com/687bfe4d3e.js" crossorigin="anonymous"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&display=swap" rel="stylesheet">
-
-
-
-  <script>
-
-document.addEventListener("DOMContentLoaded", function() {
-    var canvas = document.getElementById("space");
-    if (canvas) {
-        var c = canvas.getContext("2d");
-
-        var numStars = 1900;
-        var radius = '0.' + Math.floor(Math.random() * 9) + 1;
-        var focalLength = canvas.width * 2;
-        var warp = 0;
-        var centerX, centerY;
-
-        var stars = [], star;
-        var i;
-
-        var animate = true;
-
-        initializeStars();
-
-        function executeFrame() {
-            if (animate)
-                window.requestAnimationFrame(executeFrame); // Using standard API directly
-            moveStars();
-            drawStars();
-        }
-
-        function initializeStars() {
-            centerX = canvas.width / 2;
-            centerY = canvas.height / 2;
-
-            stars = [];
-            for (i = 0; i < numStars; i++) {
-                star = {
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    z: Math.random() * canvas.width,
-                    o: '0.' + Math.floor(Math.random() * 99) + 1
-                };
-                stars.push(star);
-            }
-        }
-
-        function moveStars() {
-            for (i = 0; i < numStars; i++) {
-                star = stars[i];
-                star.z--;
-
-                if (star.z <= 0) {
-                    star.z = canvas.width;
-                }
-            }
-        }
-
-        function drawStars() {
-            var pixelX, pixelY, pixelRadius;
-
-            if (canvas.width != window.innerWidth || canvas.height != window.innerHeight) {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                initializeStars();
-            }
-            c.fillStyle = "rgba(0,10,20,1)";
-            c.fillRect(0, 0, canvas.width, canvas.height);
-            c.fillStyle = "rgba(209, 255, 255, " + radius + ")";
-            for (i = 0; i < numStars; i++) {
-                star = stars[i];
-
-                pixelX = (star.x - centerX) * (focalLength / star.z) + centerX;
-                pixelY = (star.y - centerY) * (focalLength / star.z) + centerY;
-                pixelRadius = 1 * (focalLength / star.z);
-
-                c.fillRect(pixelX, pixelY, pixelRadius, pixelRadius);
-                c.fillStyle = "rgba(209, 255, 255, " + star.o + ")";
-            }
-        }
-
-        document.getElementById('warp').addEventListener("click", function(e) {
-            warp = warp === 1 ? 0 : 1;
-            c.clearRect(0, 0, canvas.width, canvas.height);
-            executeFrame();
-        });
-
-        executeFrame();
-    }
-});
-
-
-  </script>
-</head>
-
-
-
-<body class="mat-typography single-page">
-  <app-root></app-root>
   
-  <div id='w'>
-    <canvas id="space" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -100;"></canvas>
-
-  <a id="warp"></a>
-
-  </div>
-
-  <!-- Use the selector of LandingPageComponent as the root element -->
-
- 
-  <div class="single-content">
+  <style>
     
-  </div>
-  
-  <!--
-  <div class="animatie">
-    <svg class="waves pixelated-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-      <defs>
-        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-      </defs>
-      <g class="parallax">
-        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
-        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
-        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
-        <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
-      </g>
+
+  </style>
+</head>
+<body class="mat-typography single-page">
+  <div class="background-container">
+    <svg viewBox="0 0 540 960" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <path d="M0 0h540v960H0z" fill="#4986e7"></path>
+      <path d="M540 540c-73.4-4.7-146.9-9.4-206.6-41.1-59.8-31.7-105.9-90.4-147.7-144.6-41.7-54.2-79.2-103.9-109.5-162.2C46 133.8 23 66.9 0 0h540z" fill="#6d9eeb"></path>
+      <path d="M540 472.5c-64.3-4.1-128.5-8.2-180.8-36-52.3-27.7-92.6-79.1-129.2-126.5-36.5-47.4-69.4-90.9-95.8-141.9C107.7 117.1 87.6 58.5 67.5 0H540z" fill="#91b7f2"></path>
+      <path d="M540 405c-55.1-3.5-110.2-7-155-30.8s-79.4-67.9-110.7-108.5c-31.3-40.7-59.5-77.9-82.1-121.6-22.7-43.7-40-93.9-57.2-144.1h405z" fill="#b6d0f9"></path>
     </svg>
   </div>
-  -->
-
-  
-   
+  <app-root></app-root>
 </body>
+
+
 </html>

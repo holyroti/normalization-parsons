@@ -35,15 +35,13 @@
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css",
-              "src/assets/lib/prettify.css",
-              "src/assets/parsons.css"
+              "src/assets/lib/prettify.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery-ui-dist/jquery-ui.min.js",
               "src/assets/lib/underscore-min.js",
-              "src/assets/lib/lis.js",
-              "src/assets/parsons.js"
+              "src/assets/lib/lis.js"
             ]
           },
           "configurations": {

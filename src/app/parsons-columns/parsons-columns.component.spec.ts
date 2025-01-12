@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QuestionsComponent } from './questions.component';
+import { ParsonsColumnsComponent } from './parsons-columns.component';
 
-describe('QuestionsComponent', () => {
-  let component: QuestionsComponent;
-  let fixture: ComponentFixture<QuestionsComponent>;
+describe('ParsonsColumnsComponent', () => {
+  let component: ParsonsColumnsComponent;
+  let fixture: ComponentFixture<ParsonsColumnsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QuestionsComponent]
+      imports: [ParsonsColumnsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(QuestionsComponent);
+    fixture = TestBed.createComponent(ParsonsColumnsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

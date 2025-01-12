@@ -1,45 +1,33 @@
-<div class="parsons header">
-  <app-toolbar> </app-toolbar>
+<div class="parsons-header">
+  <app-toolbar [username]="username"></app-toolbar>
+</div>
 
-  <div class="col-12" style="height: 50px;"> </div>
-
-  <div class="game">
-
-    <div class="upper col-12 d-flex"> 
-      <div class="question col-4"> 
-        <span> insert question here</span>
-      </div>
-
-      <div id="sortableTrash" class="sortable-code drop-zone trash-zone col-6">
-       
-      </div>
-
-    </div>
-
-    <br>
-    <br>
-
-    <div class="lower col-12 d-flex"> 
-      <div class="image col-4">
-        <span> insert image here</span>
-      </div>
-
-     
-      <div id="sortable" class="sortable-code drop-zone solution-zone col-6">
-        
-      </div>
-
-    </div>
-
-    
-    <div id="feedback-container" style="margin-top: 20px;">FEEDBACK HERE</div>
-
-
-    <div class="buttons">
-      <button (click)="getFeedback()">GET FEEDBACK</button>
-    </div>
+<div class="row">
+  <div class="col-12">
+    <select
+      class="btn-primary selector"
+      [(ngModel)]="selectedSection"
+      (change)="loadQuestionsBySection()"
+    >
+      <option *ngFor="let section of sections" [value]="section.id">{{ section.name }}</option>
+    </select>
   </div>
+</div>
 
 
+<!-- Dynamic Component Loading -->
+<div class="row">
+  <div class="col-12">
+    <ng-container *ngIf="selectedSection === 1">
+      <app-parsons-easy [questions]="questions" [currentQuestion]="currentQuestion"></app-parsons-easy>
+    </ng-container>
 
+    <ng-container *ngIf="selectedSection === 2">
+      <app-parsons-columns [questions]="questions" [currentQuestion]="currentQuestion"></app-parsons-columns>
+    </ng-container>
+
+    <ng-container *ngIf="selectedSection === 3">
+      <app-parsons-relations [questions]="questions" [currentQuestion]="currentQuestion"></app-parsons-relations>
+    </ng-container>
+  </div>
 </div>

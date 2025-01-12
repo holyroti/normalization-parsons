@@ -21,7 +21,7 @@ const routes: Route[] = [
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(HttpClientModule, BrowserAnimationsModule), // Importing modules once
-    provideRouter(routes), provideAnimationsAsync()
+    provideRouter(routes), provideAnimationsAsync(), provideAnimationsAsync()
   ]
 })
   .then(() => console.log("Application started with router"))

@@ -1,21 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LoginComponent } from './login.component';
-import { FormsModule } from '@angular/forms';
+import { ParsonsProblemComponent } from './parsons-problem.component';
 
-
-
-describe('LoginComponent', () => {
-  let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
+describe('ParsonsProblemComponent', () => {
+  let component: ParsonsProblemComponent;
+  let fixture: ComponentFixture<ParsonsProblemComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoginComponent, FormsModule]
+      imports: [ParsonsProblemComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(LoginComponent);
+    fixture = TestBed.createComponent(ParsonsProblemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

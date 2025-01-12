@@ -3,13 +3,14 @@
 <mat-toolbar class="toolbar row  bg-transparent col-12">
   
   <!-- User Info -->
-  <div class="user-info col-4" (click)="openProfilePicSelectDialog()">
-    <img src="assets/avatar-placeholder.png" alt="User Avatar" class="avatar" />
+  <div class="user-info col-3" (click)="openProfilePicSelectDialog()">
+    <img [src]="userIcon" alt="User Avatar" class="avatar" />
     <span>{{ username }}</span>
   </div>
+  
 
   <!-- Progress and Achievements -->
-  <div class="progress-and-achievements col-4">
+  <div class="progress-and-achievements col-5">
     <button mat-icon-button (click)="openAchievements()" title="Achievements" class="toolbar-actions">
       <mat-icon>emoji_events</mat-icon>
     </button>
@@ -42,7 +43,7 @@
       </button>  
     </span>
 
-    <span class="col-3">
+    <span class="col-2">
 
     </span>
 

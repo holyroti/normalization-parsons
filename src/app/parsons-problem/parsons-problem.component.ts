@@ -1,38 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { CommonModule } from '@angular/common';
-//import { Question } from './question.model';
 import { Router } from '@angular/router';
-import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { MatIconModule } from '@angular/material/icon';
+import { QuestionService } from '../services/question.service';
 import { Question } from '../models/question';
-import { HttpClient } from '@angular/common/http';
-
-declare var ParsonsWidget: any;
+import { ParsonsEasyComponent } from '../parsons-easy/parsons-easy.component';
+import { ParsonsColumnsComponent } from '../parsons-columns/parsons-columns.component';
+import { ParsonsRelationsComponent } from '../parsons-relations/parsons-relations.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ToolbarComponent } from '../toolbar/toolbar.component';
 
 @Component({
   selector: 'app-parsons-problem',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatPaginatorModule,
-    MatIconModule, 
-    ToolbarComponent
-  ],
   templateUrl: './parsons-problem.component.html',
-  styleUrls: ['./parsons-problem.component.css']
+  styleUrls: ['./parsons-problem.component.css'],
+  standalone: true,
+  imports: [ParsonsEasyComponent, ParsonsColumnsComponent, ParsonsRelationsComponent, CommonModule, FormsModule, DragDropModule, ToolbarComponent ], // No need for `providers` here
+  
 })
 export class ParsonsProblemComponent implements OnInit {
   username: string = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}').username || 'Guest';
-
+  selectedSection: number = 1; // Default section
   questions: Question[] = [];
   currentQuestion: Question | null = null;
-  pageSize = 1; // Number of questions per page
-  pageIndex = 0; // Current page index
 
-  parsons: any;
+  sections = [
+    { id: 1, name: '1NF Easy' },
+    { id: 2, name: '1NF Columns' },
+    { id: 3, name: 'Relations PK/FK' },
+  ];
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private questionService: QuestionService) {}
 
   ngOnInit(): void {
     const user = sessionStorage.getItem('loggedInUser');
@@ -40,118 +38,16 @@ export class ParsonsProblemComponent implements OnInit {
       this.router.navigate(['/']);
       return;
     }
-    this.loadQuestions();
+    this.loadQuestionsBySection();
   }
 
-
-  
-  loadQuestions(): void {
-    this.http.get<Question[]>('assets/questions/questions.json').subscribe(
-      (data) => {
-        this.questions = data;
-        this.updatePaginatedQuestions();
+  loadQuestionsBySection(): void {
+    this.questionService.getQuestionsBySection(this.selectedSection).subscribe({
+      next: (questions: Question[]) => {
+        this.questions = questions;
+        this.currentQuestion = questions.length ? questions[0] : null; // Set the first question
       },
-      (error) => {
-        console.error('Error loading questions:', error);
-      }
-    );
-  }
-
-  updatePaginatedQuestions(): void {
-    const start = this.pageIndex * this.pageSize;
-    const end = start + this.pageSize;
-    this.currentQuestion = this.questions.slice(start, end)[0] || null;
-
-    if (this.currentQuestion) {
-      this.initializeParsons(this.currentQuestion);
-    }
-  }
-
-  handlePageEvent(event: any): void {
-    this.pageSize = event.pageSize;
-    this.pageIndex = event.pageIndex;
-    this.updatePaginatedQuestions();
-  }
-
-
-//https://codio.github.io/parsons-puzzle-ui/dist/
-
-getFeedback(): void {
-  if (!this.parsons || !this.currentQuestion) return;
-
-  const jsParsonsFeedback = this.parsons.getFeedback();
-  console.log('JS-Parsons Feedback:', jsParsonsFeedback);
-
-  const jsParsonsErrors = jsParsonsFeedback.log_errors || [];
-  console.log('JS-Parsons Errors:', jsParsonsErrors);
-
-  const customFeedback = this.currentQuestion.feedback || {};
-  console.log('Custom Feedback:', customFeedback);
-
-  const mergedFeedback = jsParsonsFeedback.map((error: any, index: number) => {
-    const feedbackMessage =
-      customFeedback[index.toString()] ||
-      `Default feedback for line ${index + 1}: ${error.type}`;
-    return `<p style="color: red;">${feedbackMessage}</p>`;
-
-  });
-
-  console.log('Merged Feedback:', mergedFeedback);
-
-  const feedbackContainer = document.getElementById('feedback-container');
-  if (feedbackContainer) {
-    feedbackContainer.innerHTML = mergedFeedback.join('');
-  } else {
-    alert(
-      jsParsonsFeedback.success
-        ? 'Correct solution!'
-        : mergedFeedback.map((msg:string) => msg.replace(/<\/?p.*?>/g, '')).join('\n')
-    );
-  }
-  
-}
-
-
-  
-  
-  
-  
-  
-  initializeParsons(question: Question): void {
-  if (this.parsons) {
-    this.parsons.clear();
-  }
-
-  // Convert the code to a single string with distractors
-  const codeString = question.code
-    .map((line, index) => {
-      // Automatically mark lines as distractors if not part of the correctOrder
-      if (!question.correctOrder.includes(line) && !line.includes('#distractor')) {
-        return `${line} #distractor`;
-      }
-      return line;
-    })
-    .join('\n');
-
-  this.parsons = new ParsonsWidget({
-    sortableId: 'sortable',
-    trashId: 'sortableTrash',
-    max_wrong_lines: 10,
-    grader: ParsonsWidget._graders.LineBasedGrader,
-    can_indent: false,
-    show_feedback: true,
-    feedback_cb: (feedback: string) => console.log('Feedback:', feedback),
-  });
-
-  setTimeout(() => {
-    this.parsons.init(codeString);
-    this.parsons.shuffleLines();
-    console.log('ParsonsWidget initialized successfully with distractors:', {
-      codeString,
+      error: (err) => console.error('Error loading questions:', err)
     });
-  }, 0);
+  }
 }
-}
-
-  
-  
