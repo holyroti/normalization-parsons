@@ -7,6 +7,7 @@ export interface Question {
   CODE: LineItem[];
   correctOrder: number[];
   feedback: { codeLineId: number; text: string }[]; // Feedback property
+  SUMMARY: string;
 }
 
 export interface LineItem {

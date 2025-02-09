@@ -8,21 +8,29 @@ import { AppComponent } from './app/app.component';
 import { LandingPageComponent } from './app/landing-page/landing-page.component';
 import { ParsonsProblemComponent } from './app/parsons-problem/parsons-problem.component';
 import { LoginComponent } from './app/login/login.component';
-import { ToolbarComponent } from './app/toolbar/toolbar.component';
-import { ProfilePicSelectDialogComponent } from './app/profile-pic-select-dialog/profile-pic-select-dialog.component';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { ToastrModule } from 'ngx-toastr';
+import { BlankComponent } from './app/blank-parsons/blank-parsons.component';
 
 const routes: Route[] = [
-  { path: '', component: LoginComponent },
-  { path: 'landing', component: LandingPageComponent },          // Root route for landing page
-  { path: 'parsons', component: ParsonsProblemComponent } // Route for Parsons component
+  { path: '', component: LoginComponent },                      // Root route for login
+  { path: 'landing', component: LandingPageComponent },         // Route for landing page
+  { path: 'parsons', component: ParsonsProblemComponent },      // Route for Parsons Problem component
 ];
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(HttpClientModule, BrowserAnimationsModule), // Importing modules once
-    provideRouter(routes), provideAnimationsAsync(), provideAnimationsAsync()
-  ]
+    importProvidersFrom(
+      HttpClientModule,
+      BrowserAnimationsModule,
+      ToastrModule.forRoot({
+         positionClass: 'toast-bottom-left', // Move to bottom-right
+        toastClass: 'ngx-toastr custom-toast', // Add custom class
+        preventDuplicates: true,         // Prevent duplicate toasts
+ 	progressBar: true, // Optional: add a progress bar
+      })
+    ),
+    provideRouter(routes),
+  ],
 })
-  .then(() => console.log("Application started with router"))
-  .catch(err => console.error("Application failed to start", err));
+  .then(() => console.log('Application started successfully'))
+  .catch((err) => console.error('Error starting application:', err));

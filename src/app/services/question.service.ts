@@ -2,6 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Question } from '../models/question';
+import { columnQuestion, TwoNFTable } from '../models/columnQuestion';
+import { BlankColumn, BlankFeedback, BlankQuestion, BlankTable } from '../models/BlankModel';
+
+export interface ColumnQuestionsResponse {
+  success: boolean;
+  data: columnQuestion[];
+}
+
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +19,12 @@ export class QuestionService {
 
   constructor(private http: HttpClient) {}
 
+  getTwoNFData(questionId: number): Observable<{ success: boolean; data: TwoNFTable[] }> {
+    return this.http.get<{ success: boolean; data: TwoNFTable[] }>(
+      `${this.apiUrl}/questions/${questionId}/two-nf`
+    );
+  }
+  
   /**
    * Fetch all questions by section ID
    */
@@ -40,6 +54,53 @@ export class QuestionService {
       `${this.apiUrl}/questions/feedback/${questionID}`
     );
   }
-  
-  
+  getColumnQuestions(): Observable<{ success: boolean; data: columnQuestion[] }> {
+    return this.http.get<{ success: boolean; data: columnQuestion[] }>(`${this.apiUrl}/questions/column-questions`);
+  }
+
+  getBlankQuestions(): Observable<{ success: boolean; data: any[] }> {
+    return this.http.get<{ success: boolean; data: any[] }>(`${this.apiUrl}/questions/blank-questions`);
+  }
+
+
+  getBlankDetails(questionId: number): Observable<{
+    success: boolean;
+    data: {
+      tables: BlankTable[];
+      feedback: BlankFeedback[];
+      columns: BlankColumn[];
+    };
+  }> {
+    return this.http.get<{
+      success: boolean;
+      data: {
+        tables: BlankTable[];
+        feedback: BlankFeedback[];
+        columns: BlankColumn[];
+      };
+    }>(`${this.apiUrl}/questions/${questionId}/blank-details`);
+  }
+
+  // QuestionService (frontend)
+
+getBlankQuestionByID(questionId: number): Observable<{
+  success: boolean;
+  data: {
+    question: BlankQuestion;
+    tables: BlankTable[];
+    columns: BlankColumn[];
+    feedback: BlankFeedback[];
+  };
+}> {
+  return this.http.get<{
+    success: boolean;
+    data: {
+      question: BlankQuestion;
+      tables: BlankTable[];
+      columns: BlankColumn[];
+      feedback: BlankFeedback[];
+    };
+  }>(`${this.apiUrl}/questions/${questionId}/blank-question`);
+}
+
 }

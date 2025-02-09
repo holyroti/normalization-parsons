@@ -1,5 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
+/*toaster */
+/* Custom toast positioning for bottom-right with an offset */
+/* Custom toast positioning for bottom-right with an offset */
+::ng-deep .toast-bottom-right {
+  bottom: 25px !important; /* Adjust vertical position */
+  right: 50px !important; /* Adjust horizontal position */
+}
+
+/* Optional: Custom toast appearance */
+::ng-deep .toast {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+}
+
+
 .parsons-header {
   max-width: 1000px;
   margin: 35px auto;
@@ -14,7 +30,7 @@ body{
   font-style: normal;
   font-weight: 300;
   --color: black;
-  background-color: transparent;
+  --background-color: transparent;
   --image-rendering: pixelated; /* for images */
   color:rgba(209, 255, 255,1)!important;
  
@@ -158,3 +174,6 @@ button:hover{
 .background-container svg path:nth-child(2) { animation-delay: 4s; }
 .background-container svg path:nth-child(3) { animation-delay: 2s; }
 .background-container svg path:nth-child(4) { animation-delay: 0s; }
+
+
+

@@ -1,4 +1,5 @@
 const questionModel = require('../models/questionModel');
+const blankModel = require('../models/blankModel');
 
 // Fetch questions by section ID
 exports.getQuestionsBySectionID = async (req, res) => {
@@ -59,4 +60,175 @@ exports.getFeedbackByQuestionID = async (req, res) => {
       console.error('Failed to fetch feedback details:', err);
       res.status(500).send('Failed to fetch feedback details.');
   }
+};
+
+
+
+const { fetchColumnFeedback, fetchColumnQuestions } = require('../models/questionModel');
+exports.getColumnQuestions = async (req, res) => {
+    try {
+        const questions = await fetchColumnQuestions();
+
+        // Fetch feedback for each question and add it to the response
+        for (const question of questions) {
+            question.feedback = await fetchColumnFeedback(question.questionId);
+            console.log(`Feedback for Question ${question.questionId}:`, question.feedback); // Log feedback
+        }
+
+        res.json({ success: true, data: questions });
+    } catch (err) {
+        console.error('Failed to fetch column questions:', err);
+        res.status(500).send('Failed to fetch column questions.');
+    }
+};
+
+
+const { fetchTwoNFData } = require('../models/questionModel');
+
+exports.getTwoNFData = async (req, res) => {
+    const { questionId } = req.params; // Assume questionId is passed as a route parameter
+
+    try {
+        const data = await fetchTwoNFData(questionId);
+        res.json({ success: true, data });
+    } catch (err) {
+        console.error('Failed to fetch 2NF data:', err);
+        res.status(500).send('Failed to fetch 2NF data.');
+    }
+};
+
+exports.getBlankQuestions = async (req, res) => {
+    try {
+        const questions = await blankModel.fetchBlankQuestions();
+        res.json({ success: true, data: questions });
+    } catch (err) {
+        console.error('Failed to fetch blank questions:', err);
+        res.status(500).send('Failed to fetch blank questions.');
+    }
+};
+
+exports.getBlankDetails = async (req, res) => {
+    const { questionID } = req.params;
+    try {
+        // Fetch related details
+        const tables = await blankModel.fetchBlankTables(questionID);
+        const columns = await blankModel.fetchBlankColumns(questionID);
+        const feedback = await blankModel.fetchBlankFeedback(questionID);
+
+        // Map columns to their respective tables
+        const mappedTables = tables.map((table) => ({
+            ...table,
+            columns: columns.filter((column) => column.target_table === table.TARGET_TABLE),
+        }));
+
+        // Respond with the mapped structure, explicitly including the columns array
+        res.json({
+            success: true,
+            data: {
+                tables: mappedTables,
+                feedback,
+                columns, // Add columns explicitly here
+            },
+        });
+    } catch (err) {
+        console.error('Failed to fetch blank details:', err);
+        res.status(500).send('Failed to fetch blank details.');
+    }
+};
+
+
+//let { questionPromise,tablesPromise,columnsPromise,feedbackPromise } = require('../models/blankModel');
+
+exports.getBlankQuestionByID = async (req, res) => {
+    const { questionID } = req.params;
+
+    try {
+        // Fetch related data asynchronously using await
+        const questionPromise = blankModel.fetchBlankQuestionsById(questionID);
+        const tablesPromise = blankModel.fetchBlankTables(questionID);
+        const columnsPromise = blankModel.fetchBlankColumns(questionID);
+        const feedbackPromise = blankModel.fetchBlankFeedback(questionID);
+
+        // Wait for all promises to resolve
+        const [question, tables, columns, feedback] = await Promise.all([
+            questionPromise,
+            tablesPromise,
+            columnsPromise,
+            feedbackPromise
+        ]);
+
+        // If any of the data is missing, handle it
+        if (!question || !tables || !columns || !feedback) {
+            return res.status(500).json({ success: false, message: 'Missing required data fields' });
+        }
+
+        // Process tables and columns data and include table names
+        const mappedTables = tables.map((table) => {
+            const columnsForTable = columns
+                .filter((col) => col.target_table === table.target_table)
+                .map((col) => ({
+                    id: col.ID,
+                    columnName: col.column_name,
+                    keyType: col.key_type,
+                    referencesTableId: col.references_tableID,
+                    target_table: col.target_table,
+                }));
+
+            if (columnsForTable.length === 0) {
+                console.warn(`No columns found for table: ${table.target_table}`);
+            }
+
+            return {
+                id: table.ID,
+                targetTable: table.target_table,
+                referencesTable: table.references_table,
+                tableName: table.target_table, // Add table name
+                columns: columnsForTable,
+            };
+        });
+
+        // Map feedback to columns
+        const mappedFeedback = feedback.map((feed) => ({
+            id: feed.ID,
+            questionid: feed.QUESTIONID,
+            target_table: feed.TARGET_TABLE,
+            column_name: feed.COLUMN_NAME,
+            expectedKeyType: feed.EXPECTED_KEY_TYPE,
+            referencesTableId: feed.REFERENCES_TABLE_ID,
+            feedback: feed.FEEDBACK,
+            feedbackType: feed.FEEDBACK_TYPE
+
+
+            // id: feed.ID,
+            // columnId: feed.columnID,
+            // columnName: feed.column_name,
+            // targetTableId: feed.target_table_ID,
+            // expectedKeyType: feed.expected_key_type,
+            // expectedReferencesTableId: feed.expected_references_table_ID,
+            // feedback: feed.feedback,
+            // feedbackType: feed.feedback_type,
+        }));
+
+        // Create the result object with all necessary fields
+        const result = {
+            question: {
+                questionId: question.questionID || 'N/A',
+                sectionId: question.sectionID || 'N/A',
+                htmlCode: question.html_code || '',
+                hints: question.hints || '',
+                instructions: question.instructions || '',
+                question: question.question || '',
+            },
+            tables: mappedTables,
+            feedback: mappedFeedback,
+            columns: columns, // Include columns explicitly
+        };
+
+        // Send the result back as JSON
+        res.json({ success: true, data: result });
+    } catch (err) {
+        // Handle any errors that occur during fetching data
+        console.error('Error fetching blank question details:', err);
+        res.status(500).json({ success: false, message: 'Error fetching blank question details' });
+    }
 };

@@ -564,3 +564,167 @@ button{
 ::ng-deep .styled-dynamic-content table {
   animation: fadeIn 0.5s ease-in-out;
 }
+
+
+.progress-container {
+  display: flex;
+  justify-content: center; /* Center the progress bar horizontally */
+  align-items: center;     /* Vertically center the circles */
+  width: 100%;             /* Make sure it spans the full width of its container */
+  position: relative;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;  /* Stack the circle and label vertically */
+  align-items: center;     /* Center the label and circle */
+  justify-content: center;
+  position: relative;
+  margin: 0 15px;          /* Add some space between the steps */
+}
+
+.step-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.step-label {
+  margin-top: 5px; /* Space between circle and label */
+  font-size: 12px;
+  color: #4CAF50;  /* Optional: Adjust label color */
+}
+
+::ng-deep .progress-step.active .step-circle {
+  background-color: yellow; /* Green for active step */
+}
+
+.progress-step.completed .step-circle {
+  background-color: #4CAF50; /* Green for completed steps */
+}
+
+.progress-step.upcoming .step-circle {
+  background-color: lightgray; /* Gray for upcoming steps */
+}
+
+.progress-step.completed .step-label,
+.progress-step.active .step-label {
+  --color: #4CAF50; /* Green label for active and completed steps */
+}
+
+.progress-step.upcoming .step-circle {
+  background-color: lightgray; /* Default color for upcoming steps */
+}
+
+/* Remove the green line connecting steps */
+.progress-step:not(.completed)::after {
+  content: none;  /* This removes the line */
+}
+
+.progress-step:last-child::after {
+  content: none;
+}
+
+.summary-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.summary-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+}
+
+.summary-content {
+  font-size: 16px;
+}
+
+.close-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.close-btn:hover {
+  background-color: #45a049;
+}
+
+
+/*modal overlay*/
+.summary-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.summary-modal-content {
+  background-color: rgb(136, 169, 230);
+  border-radius: 8px;
+  padding: 20px;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+  color: white;
+  font-size: 17px;;
+}
+
+
+.summary-modal h2 {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+}
+
+.close-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;  /* Reduce font size here */
+  color: yellow;
+  cursor: pointer;
+  padding: 0 10px;  /* Adjust padding for the button */
+}
+
+.close-btn:hover {
+  color: #333; /* Hover effect to change the close button color */
+}
+
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

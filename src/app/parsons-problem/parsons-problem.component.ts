@@ -9,45 +9,43 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-
+import { BlankComponent } from '../blank-parsons/blank-parsons.component';
+import { VisualNovelComponent } from '../visual-novel/visual-novel.component';
 @Component({
   selector: 'app-parsons-problem',
   templateUrl: './parsons-problem.component.html',
   styleUrls: ['./parsons-problem.component.css'],
   standalone: true,
-  imports: [ParsonsEasyComponent, ParsonsColumnsComponent, ParsonsRelationsComponent, CommonModule, FormsModule, DragDropModule, ToolbarComponent ], // No need for `providers` here
+  imports: [ParsonsEasyComponent, ParsonsColumnsComponent, CommonModule, FormsModule, DragDropModule, ToolbarComponent, BlankComponent, VisualNovelComponent ], // No need for `providers` here
   
 })
 export class ParsonsProblemComponent implements OnInit {
   username: string = JSON.parse(sessionStorage.getItem('loggedInUser') || '{}').username || 'Guest';
-  selectedSection: number = 1; // Default section
+  selectedSection: number = 3; // Default section
   questions: Question[] = [];
-  currentQuestion: Question | null = null;
+  selectedQuestionId: number | null = null; // Pass questionId instead of full question
+  stage: number = 2; // 1 = Component 1 (0-1NF), 2 = Component 2 (1-2NF)
 
-  sections = [
-    { id: 1, name: '1NF Easy' },
-    { id: 2, name: '1NF Columns' },
-    { id: 3, name: 'Relations PK/FK' },
-  ];
-
-  constructor(private router: Router, private questionService: QuestionService) {}
+  showSummary: boolean = true;
+  constructor(private questionService: QuestionService) {}
+  stages: string[] = ['Stage 1: 0NF to 1NF', 'Stage 2: 1NF to 2NF', 'Stage 3: 2NF to 3NF', 'Stage 4: Summary'];
 
   ngOnInit(): void {
-    const user = sessionStorage.getItem('loggedInUser');
-    if (!user) {
-      this.router.navigate(['/']);
-      return;
-    }
-    this.loadQuestionsBySection();
+    this.selectedQuestionId = 1;
   }
 
-  loadQuestionsBySection(): void {
-    this.questionService.getQuestionsBySection(this.selectedSection).subscribe({
-      next: (questions: Question[]) => {
-        this.questions = questions;
-        this.currentQuestion = questions.length ? questions[0] : null; // Set the first question
-      },
-      error: (err) => console.error('Error loading questions:', err)
-    });
+ 
+
+  nextStage(): void {
+    if (this.stage < 4) {
+      this.stage++;
+    } else {
+      console.log('All stages completed!');
+      this.showSummary = true;
+    }
+  }
+
+  closeSummary(){
+    this.showSummary = false;
   }
 }

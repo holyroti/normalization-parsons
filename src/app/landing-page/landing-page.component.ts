@@ -2,14 +2,16 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
-import { UserService } from '../services/user.service'; // Import the service
+import { UserService } from '../services/user.service';
+import { VisualNovelComponent } from '../visual-novel/visual-novel.component';
+import { GameComponent } from "../game/game.component";
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, ToolbarComponent], // No need for `providers` here
+  imports: [CommonModule, ToolbarComponent, VisualNovelComponent, GameComponent],
   templateUrl: './landing-page.component.html',
-  styleUrls: ['./landing-page.component.css'],
+  styleUrls: ['./landing-page.component.css']
 })
 export class LandingPageComponent {
   showAchievements = false;
@@ -21,7 +23,7 @@ export class LandingPageComponent {
   ngOnInit(): void {
     const user = this.userService.getLoggedInUser();
     console.log('Retrieved user from session:', user); // Debug log
-  
+
     if (!this.userService.isLoggedIn()) {
       console.log('User not logged in, redirecting to login.');
       this.router.navigate(['/']);
@@ -31,7 +33,6 @@ export class LandingPageComponent {
     }
   }
   
-
   logout(): void {
     sessionStorage.clear();
     this.router.navigate(['/']); // Redirect to login
